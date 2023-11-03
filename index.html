@@ -1,25 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat API Demo</title>
-    <script src="main.js"></script>
+    <title>Gradio Chat Demo</title>
 </head>
 <body>
-    <h1>Chat API Demo</h1>
-    <div id="chat-container">
-        <div id="output-container">
-            <h2>Generated Response</h2>
-            <div id="output"></div>
-        </div>
-        <div id="input-container">
-            <h2>Input</h2>
-            <label for="message">Message:</label>
-            <input type="text" id="message" placeholder="Enter your message" /><br><br>
-            <button id="generate-button">Generate Response</button>
-        </div>
+    <h1>Gradio Chat Demo</h1>
+
+    <div id="message-container">
+        <label for="message">Message:</label>
+        <input type="text" id="message" value="Hello!!">
     </div>
+
+    <button id="generate-button">Generate</button>
+
+    <div id="output-container">
+        <label for="output">Output:</label>
+        <textarea id="output" rows="5" cols="50" readonly></textarea>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@gradio/client"></script>
+    <script>
+        const appURL = "https://vaderd-nk.hf.space/--replicas/vm66b/";
+        const appEndpoint = "/chat";
+
+        const app = gr.client(appURL);
+
+        const generateButton = document.getElementById("generate-button");
+        const messageInput = document.getElementById("message");
+        const outputTextarea = document.getElementById("output");
+
+        generateButton.addEventListener("click", async () => {
+            const message = messageInput.value;
+
+            const result = await app.predict(appEndpoint, [message, 0, 64, 0, 1]);
+
+            outputTextarea.value = result.data;
+        });
+    </script>
 </body>
 </html>
-
