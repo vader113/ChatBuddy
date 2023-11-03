@@ -18,13 +18,7 @@
         <textarea id="output" rows="5" cols="50" readonly></textarea>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@gradio/client"></script>
     <script>
-        const appURL = "https://vaderd-nk.hf.space/--replicas/vm66b/";
-        const appEndpoint = "/chat";
-
-        const app = gr.client(appURL);
-
         const generateButton = document.getElementById("generate-button");
         const messageInput = document.getElementById("message");
         const outputTextarea = document.getElementById("output");
@@ -32,9 +26,14 @@
         generateButton.addEventListener("click", async () => {
             const message = messageInput.value;
 
-            const result = await app.predict(appEndpoint, [message, 0, 64, 0, 1]);
-
-            outputTextarea.value = result.data;
+            try {
+                const response = await fetch(`/get_response?message=${message}`);
+                const data = await response.json();
+                outputTextarea.value = data.output;
+            } catch (error) {
+                console.error(error);
+                outputTextarea.value = 'Error: Failed to get response';
+            }
         });
     </script>
 </body>
